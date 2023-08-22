@@ -1,0 +1,63 @@
+@startuml
+skinparam actorStyle awesome
+left to right direction
+
+actor Merchant as M
+
+
+package Cabinet  {
+  usecase "Registration" as reg
+  usecase "Auth" as auth
+  usecase "Payment method settings" as pms
+  usecase "Shop" as sh
+  usecase "Payment Form Settings" as pfs
+  usecase "Payment list" as pl
+  usecase "Payment Details" as pd
+  usecase "Refund Payment" as rp
+}
+
+note right of sh
+    Работа с магазинами: статус, логотип,
+    технические настройки
+end note
+
+note right of pms: Привязка, замена банковской карты
+
+M -> reg
+M -> auth
+M -> sh
+M -> pms
+M -> pfs
+M -> pl
+M -> pd
+M -> rp
+
+actor "Admin" as ADM #red
+actor "Operator" as OP
+actor "Operator AML" as AML_OP #green
+
+package Adminarea {
+    usecase "Auth" as auth_op
+    usecase "Shops" as shops_op
+    usecase "KYC" as kyc_op
+    usecase "Permissions" as perm_op
+    usecase "Transactions" as trans_op
+}
+OP -> auth_op
+OP -> shops_op
+AML_OP -> kyc_op #line:green
+AML_OP -> auth_op #line:green
+
+ADM -> auth_op #line:red
+ADM -> perm_op #line:red
+actor Cardholder as CH #lightyellow
+
+package "Payment Page" as pp {
+    usecase "Payment" as p #lightyellow
+}
+
+pfs .> p
+CH -down-> p
+p .> pd
+
+@enduml

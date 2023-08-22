@@ -1,0 +1,90 @@
+@startuml: NAME
+
+actor cardholder as CH
+participant PaymentPage as PP
+note over PP : consumer group2 / topic2
+participant Shop as SH
+participant Transacting as TR
+note over TR : consumer group3 / topic2
+queue queue as Q
+participant PaymentGate as PG
+note over PG : consumer group1 / topic1
+participant Acquiring as AC
+
+CH -> PP : paymentURL/$shopId
+activate PP
+PG -> Q : isEmpty(topic1)
+activate PG
+activate Q
+Q --> PG : true
+deactivate Q
+deactivate PG
+PP -> SH : GET shop/settings (shopId)
+activate SH
+
+SH -> SH : check status
+SH --> PP : settings
+deactivate SH
+
+PG -> Q : isEmpty(topic1)
+activate PG
+activate Q
+Q --> PG : true
+deactivate Q
+deactivate PG
+
+
+PP --> CH : form with formFields
+deactivate PP
+CH -> PP : отправка формы (formFields)
+activate PP
+PP -> TR : POST tr/payment (formFields)
+activate TR
+TR --> PP : 200 (paymentUUID)
+PP --> CH : прелоадер платеж в обработке
+TR -> Q : put create transaction (topic1)
+deactivate TR
+
+
+
+
+PG -> Q : isEmpty(topic1)
+activate PG
+activate Q
+Q --> PG : false
+deactivate Q
+PG -> Q : get transaction
+activate Q
+Q --> PG : transaction
+deactivate Q
+PG -> AC : transaction
+activate AC
+AC --> PG : extID
+deactivate AC
+PG -> PG : save extID
+== 3DS part ==
+AC -> PG : webhook with status
+deactivate AC
+PG -> Q : put transaction status (topic2)
+deactivate PG
+
+TR -> Q : get transaction status(topic2)
+activate Q
+activate TR
+
+ Q --> TR : transaction status
+note left : save status
+deactivate Q
+deactivate TR
+
+PP -> Q : get transaction status(topic2)
+activate PP
+activate Q
+Q --> PP : transaction status
+note left : save status
+deactivate PP
+deactivate Q
+PP --> CH : Результат платежа
+deactivate PP
+
+@enduml
