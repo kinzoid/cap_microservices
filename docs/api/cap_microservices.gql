@@ -1,0 +1,70 @@
+enum shopStatus{
+	active
+	blocked
+	review
+	closed
+}
+
+enum merchantStatus{
+	active
+	blocked
+	review
+	closed
+}
+
+enum transactionStatus{
+	created
+	inprogress
+	failed
+	refused
+	accepted
+}
+
+type Shop{
+	iD: ID!
+	name: String
+	shopStatus: shopStatus
+	url: String
+	description: String
+	merchant: Merchant!
+}
+
+type Merchant{
+	iD: ID!
+	lastName: String
+	firstName: String
+	email: String!
+	merchantStatus: merchantStatus
+}
+
+type Settings{
+	iD: ID!
+	shop: Shop!
+	reqEmail: Boolean!
+	reqPhone: Boolean!
+}
+
+type Transaction{
+	iD: ID!
+	amount: Int!
+	shop: Shop!
+	transactionStatus: transactionStatus
+}
+
+type Query{
+	getShop(id: ID): [Shop]!
+}
+
+type Query2{
+	getAllShops: [Shop]!
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Mutation {
+  addMerchant(lastName: String, firstName: String, email: String!, merchantStatus: merchantStatus): Merchant
+}
+

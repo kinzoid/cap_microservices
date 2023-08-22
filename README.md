@@ -4,6 +4,7 @@
 
 ## Directory structure
 ## docs:
+- **api**: Example of GraphQL scheme.
 - **decisions**: Architecture Decisions Records
 - **diagrams**: C4 Model Diagrams and Sequence diagrams
   - **images** - folder with png diagrams 
@@ -12,4 +13,4 @@
   - payment_process.puml - payment sequence diagram (success case);
   - deployment.vpd - Deployment diagram;
   
-> vpd extension can be opened with visual-paradigm.com service.
+> vpd extension can be opened with visual-paradigm.com service or use images folder to get it fast.
